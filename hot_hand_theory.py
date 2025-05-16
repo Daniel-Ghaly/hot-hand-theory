@@ -4,6 +4,7 @@ shot_logs_file_path = 'shot_logs.csv'
 df = pd.read_csv(shot_logs_file_path)
 
 def check_for_hot_streak(player_shot_results):
+    player_shot_results = [x[1] for x in player_shot_results]
     if(len(player_shot_results) <= 3):
         return
     else:
@@ -19,12 +20,12 @@ def check_for_hot_streak(player_shot_results):
 for GAME_ID in df['GAME_ID'].unique():
     game_df = df[df['GAME_ID'] == GAME_ID]
     for player_id in game_df['player_id'].unique():
-        player_shots_df = game_df[game_df['player_id'] == player_id]
+        player_shots_df = game_df[game_df['player_id'] == player_id].sort_values(by='SHOT_NUMBER')
         player_shot_results = []
         for index, row in player_shots_df.iterrows():
             if row['SHOT_RESULT'] == 'made':
-                player_shot_results.append(1)
+                player_shot_results.append((row.name, 1))
             elif row['SHOT_RESULT'] == 'missed':
-                player_shot_results.append(0)
+                player_shot_results.append((row.name, 0))
         check_for_hot_streak(player_shot_results)
         
